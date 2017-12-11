@@ -1,6 +1,7 @@
 package Generic;
 
 
+import java.lang.reflect.Array;
 import java.util.Arrays;
 
 /**
@@ -110,18 +111,42 @@ public class MyArray<T> {
     }
 
     /**
-     * Функция возвращает все элементы в новом массиве
-     * @return - новый массив значений
-     */
-    public T[] getAll(){
-        T[] array = (T[]) new Object[size()];
-        //java.util.Arrays.fill(array,myArray);
+     * Функция - возвращает новый массив со всеми элементами старого
+     * @param clazz - метод Class типа массива
+     * */
+    public <T> T[] getAll(Class<T> clazz) {
+        T[] array = (T[]) Array.newInstance(clazz, size());
+
         for (int i = 0; i < size(); i++) {
-            array[i] = get(i);
+            array[i] = (T) get(i);
         }
-        //System.arraycopy(myArray, 0, array,0,size);
+
         return array;
     }
+
+
+    /**
+     * Функция - возвращает новый массив с данными указанного диапозона
+     * @param clazz - метод Class типа массива
+     *@param fromIndex начальный элемент диапозона
+     *@param toIndex конечный элемент диапозона
+     * */
+    public <T> T[] getAll(Class<T> clazz, int fromIndex, int toIndex) {
+        T[] array = (T[]) Array.newInstance(clazz, (toIndex-fromIndex+1));
+        fromIndex--;
+        toIndex--;
+        if (fromIndex < 0 || fromIndex > size() || toIndex < 0 || toIndex > size()){
+            throw new IndexOutOfBoundsException("Некорректный диапозон индексов");
+        }
+        for (int i = 0; i < size(); i++) {
+            if (i >= fromIndex && i <= toIndex){
+                array[i] = (T) get(i);
+            }
+        }
+
+        return array;
+    }
+
 
     /**
      * Функция возврата номера значения в массиве
