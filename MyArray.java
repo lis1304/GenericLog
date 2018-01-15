@@ -3,6 +3,8 @@ package Generic;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Своя реализация ArrayList
@@ -10,6 +12,8 @@ import java.util.Arrays;
  * @version 0.1
  */
 public class MyArray<T> {
+
+    private static final Logger log = LoggerFactory.getLogger(MyArray.class);
 
     /** Массив, основное поле */
     private T[] myArray;
@@ -39,11 +43,14 @@ public class MyArray<T> {
      */
     public MyArray(int sizeArray) throws ExceptionSize {
         if (sizeArray > 0){
+            log.info("create MyArray, sizeArray=",sizeArray);
             this.myArray = (T[]) new Object[sizeArray];
         } else if (sizeArray == 0){
+            log.info("create MyArray, sizeArray=",0);
             this.myArray = (T[]) DEFAULTCAPACITY_EMPTY_ELEMENTDATA;
         } else
         {
+            log.warn("error sizeArray=",sizeArray);
             throw new ExceptionSize("Размер массива не может быть < 0");
         }
 
@@ -62,6 +69,7 @@ public class MyArray<T> {
      * @param value - значение элемента
      */
     public void add(T value){
+        log.info("add to array = ",value);
         if (index == size())
         {
             growArray();
@@ -79,9 +87,10 @@ public class MyArray<T> {
     public void add(int index, T value){
         if (index > size() || index < 0)
         {
+            log.warn("error index add",index);
             throw new IndexOutOfBoundsException("Index = "+index+" max index = "+size());
         }
-
+        log.info("add to array in index ",index,value);
         System.arraycopy(myArray, index, myArray, index + 1,
                 size - index);
         myArray[index] = value;
@@ -105,6 +114,7 @@ public class MyArray<T> {
      */
     public T get(int index){
         if (index >= size()){
+            log.warn("error index get",index);
             throw new IndexOutOfBoundsException("Максимальный индекс = "+size()+" запрашиваемый индекс = "+index);
         }
         return myArray[index];
@@ -132,10 +142,12 @@ public class MyArray<T> {
      *@param toIndex конечный элемент диапозона
      * */
     public <T> T[] getAll(Class<T> clazz, int fromIndex, int toIndex) {
+        log.info("get all to between",fromIndex,toIndex);
         T[] array = (T[]) Array.newInstance(clazz, (toIndex-fromIndex+1));
         fromIndex--;
         toIndex--;
         if (fromIndex < 0 || fromIndex > size() || toIndex < 0 || toIndex > size()){
+            log.warn("error get all to between",fromIndex,toIndex);
             throw new IndexOutOfBoundsException("Некорректный диапозон индексов");
         }
         for (int i = 0; i < size(); i++) {
@@ -154,6 +166,7 @@ public class MyArray<T> {
      * @return - элемент в массиве
      */
     public int indexOf(T value) {
+        log.info("return valueOf = ",value);
         if (value == null) {
             for (int i = 0; i < size(); i++)
                 if (myArray[i]==null)
@@ -170,7 +183,7 @@ public class MyArray<T> {
      * Процедура очистка массива
      */
     public void clear() {
-
+        log.info("clear array");
         for (int i = 0; i < size(); i++){
             myArray[i] = null;
         }
